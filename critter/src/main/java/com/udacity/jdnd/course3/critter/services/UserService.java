@@ -67,10 +67,6 @@ public class UserService {
 
     public List<CustomerDTO> getAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
-        return getCustomerDTOList(customers);
-    }
-
-    private List<CustomerDTO> getCustomerDTOList(List<Customer> customers) {
         return customers.stream().map(customer -> getDTO(customer)).collect(Collectors.toList());
     }
 
