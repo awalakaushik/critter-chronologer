@@ -49,6 +49,22 @@ public class UserService {
         return getDTO(savedCustomer);
     }
 
+    public EmployeeDTO saveEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+
+        employee.setId(employeeDTO.getId());
+        employee.setFullName(employeeDTO.getName());
+        employee.setDaysAvailableForEmployee(employeeDTO.getDaysAvailable());
+
+        if (employeeDTO.getSkills() != null && !employeeDTO.getSkills().isEmpty()) {
+            employee.setEmployeeSkills(employeeDTO.getSkills());
+        }
+
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        return getDTO(savedEmployee);
+    }
+
     public List<CustomerDTO> getAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
         return getCustomerDTOList(customers);
@@ -75,4 +91,23 @@ public class UserService {
         return customerDTO;
     }
 
+    private EmployeeDTO getDTO(Employee employee) {
+
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+
+        employeeDTO.setId(employee.getId());
+        employeeDTO.setName(employee.getFullName());
+        employeeDTO.setDaysAvailable(employee.getDaysAvailableForEmployee());
+
+        if (employee.getEmployeeSkills() != null && !employee.getEmployeeSkills().isEmpty()) {
+            employeeDTO.setSkills(employee.getEmployeeSkills());
+        }
+
+        return employeeDTO;
+    }
+
+    public EmployeeDTO getEmployee(long employeeId) {
+        Employee employee = employeeRepository.getOne(employeeId);
+        return getDTO(employee);
+    }
 }

@@ -3,6 +3,9 @@ package com.udacity.jdnd.course3.critter.controllers;
 import com.udacity.jdnd.course3.critter.dtos.CustomerDTO;
 import com.udacity.jdnd.course3.critter.dtos.EmployeeDTO;
 import com.udacity.jdnd.course3.critter.dtos.EmployeeRequestDTO;
+import com.udacity.jdnd.course3.critter.services.PetService;
+import com.udacity.jdnd.course3.critter.services.ScheduleService;
+import com.udacity.jdnd.course3.critter.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
@@ -19,14 +22,24 @@ import java.util.Set;
 @RequestMapping("/user")
 public class UserController {
 
+    private UserService userService;
+    private PetService petService;
+    private ScheduleService scheduleService;
+
+    public UserController(UserService userService, PetService petService, ScheduleService scheduleService) {
+        this.userService = userService;
+        this.petService = petService;
+        this.scheduleService = scheduleService;
+    }
+
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
-        throw new UnsupportedOperationException();
+        return userService.saveCustomer(customerDTO);
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-        throw new UnsupportedOperationException();
+        return userService.getAllCustomers();
     }
 
     @GetMapping("/customer/pet/{petId}")
@@ -36,12 +49,12 @@ public class UserController {
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        throw new UnsupportedOperationException();
+        return userService.saveEmployee(employeeDTO);
     }
 
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        return userService.getEmployee(employeeId);
     }
 
     @PutMapping("/employee/{employeeId}")
