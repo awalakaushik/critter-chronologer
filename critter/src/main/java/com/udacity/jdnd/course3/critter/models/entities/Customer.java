@@ -24,7 +24,7 @@ public class Customer {
     private String customerNotes;
 
     @OneToMany(targetEntity = Pet.class, fetch = FetchType.LAZY)
-    private List<Pet> customerPets;
+    private List<Pet> petIds;
 
     public long getId() {
         return id;
@@ -58,15 +58,15 @@ public class Customer {
         this.customerNotes = customerNotes;
     }
 
-    public List<Pet> getCustomerPets() {
-        return customerPets;
+    public List<Pet> getPetIds() {
+        return petIds;
     }
 
-    public void setCustomerPets(List<Pet> customerPets) {
-        this.customerPets = customerPets;
+    public void setPetIds(List<Pet> petIds) {
+        this.petIds = petIds;
     }
 
     public void addPet(Pet pet) {
-        customerPets.add(pet);
+        petIds.add(pet);
     }
 }
