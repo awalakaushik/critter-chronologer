@@ -1,9 +1,9 @@
 package com.udacity.jdnd.course3.critter.models.entities;
 
-import com.udacity.jdnd.course3.critter.models.entities.Employee;
-import com.udacity.jdnd.course3.critter.models.entities.Pet;
+import com.udacity.jdnd.course3.critter.enums.EmployeeSkill;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +26,16 @@ public class Schedule {
 
     @ElementCollection
     private Set<EmployeeSkill> employeeSkills;
+
+    private LocalDate date;
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
     public long getId() {
         return id;

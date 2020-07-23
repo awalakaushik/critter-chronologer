@@ -70,7 +70,7 @@ public class UserService {
 
     public List<CustomerDTO> getAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
-        return customers.stream().map(customer -> getDTO(customer)).collect(Collectors.toList());
+        return customers.stream().map(this::getDTO).collect(Collectors.toList());
     }
 
     private CustomerDTO getDTO(Customer customer) {
@@ -133,9 +133,10 @@ public class UserService {
                 .stream()
                 .filter(employee -> employee.getEmployeeSkills().containsAll(employeeRequestDTO.getSkills()))
                 .collect(Collectors.toList());
+
         return filteredEmployees
                 .stream()
-                .map(employee -> getDTO(employee))
+                .map(this::getDTO)
                 .collect(Collectors.toList());
     }
 }
