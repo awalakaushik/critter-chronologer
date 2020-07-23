@@ -106,4 +106,8 @@ public class UserService {
         Employee employee = employeeRepository.getOne(employeeId);
         return getDTO(employee);
     }
+
+    public CustomerDTO getOwnerByPet(long petId) {
+        return getDTO(petRepository.getOne(petId).getCustomer());
+    }
 }
