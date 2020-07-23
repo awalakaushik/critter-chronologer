@@ -1,5 +1,7 @@
 package com.udacity.jdnd.course3.critter.dtos;
 
+import com.udacity.jdnd.course3.critter.models.entities.Customer;
+
 import java.util.List;
 
 /**
@@ -52,4 +54,5 @@ public class CustomerDTO {
     public void setPetIds(List<Long> petIds) {
         this.petIds = petIds;
     }
+
 }
