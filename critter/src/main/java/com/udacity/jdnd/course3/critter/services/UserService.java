@@ -2,6 +2,7 @@ package com.udacity.jdnd.course3.critter.services;
 
 import com.udacity.jdnd.course3.critter.dtos.CustomerDTO;
 import com.udacity.jdnd.course3.critter.dtos.EmployeeDTO;
+import com.udacity.jdnd.course3.critter.dtos.EmployeeRequestDTO;
 import com.udacity.jdnd.course3.critter.models.entities.Customer;
 import com.udacity.jdnd.course3.critter.models.entities.Employee;
 import com.udacity.jdnd.course3.critter.models.entities.Pet;
@@ -117,5 +118,24 @@ public class UserService {
         Employee employee = employeeRepository.getOne(employeeId);
         employee.setDaysAvailableForEmployee(daysAvailable);
         employeeRepository.save(employee);
+    }
+
+    public List<EmployeeDTO> findEmployeesForService(EmployeeRequestDTO employeeRequestDTO) {
+        List<Employee> employees = employeeRepository.findAll();
+
+        List<Employee> filteredEmployees = employees.stream().filter(employee -> {
+            List<DayOfWeek> availableDays = employee.getDaysAvailableForEmployee()
+                    .stream()
+                    .filter(dayOfWeek -> dayOfWeek == employeeRequestDTO.getDate().getDayOfWeek())
+                    .collect(Collectors.toList());
+            return employee.getDaysAvailableForEmployee().containsAll(availableDays);
+        }).collect(Collectors.toList())
+                .stream()
+                .filter(employee -> employee.getEmployeeSkills().containsAll(employeeRequestDTO.getSkills()))
+                .collect(Collectors.toList());
+        return filteredEmployees
+                .stream()
+                .map(employee -> getDTO(employee))
+                .collect(Collectors.toList());
     }
 }
