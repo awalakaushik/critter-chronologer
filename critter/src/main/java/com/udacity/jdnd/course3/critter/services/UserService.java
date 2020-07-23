@@ -10,6 +10,7 @@ import com.udacity.jdnd.course3.critter.repositories.EmployeeRepository;
 import com.udacity.jdnd.course3.critter.repositories.PetRepository;
 import com.udacity.jdnd.course3.critter.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserService {
 
     private CustomerRepository customerRepository;

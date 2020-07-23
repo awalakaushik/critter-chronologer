@@ -6,12 +6,14 @@ import com.udacity.jdnd.course3.critter.models.entities.Pet;
 import com.udacity.jdnd.course3.critter.repositories.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repositories.PetRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class PetService {
 
     private PetRepository petRepository;
@@ -65,7 +67,7 @@ public class PetService {
         return pets
                 .stream()
                 .filter(pet -> pet.getCustomer().getId() == ownerId)
-                .map(pet -> getDTO(pet))
+                .map(this::getDTO)
                 .collect(Collectors.toList());
     }
 

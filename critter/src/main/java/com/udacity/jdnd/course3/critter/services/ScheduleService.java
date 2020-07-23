@@ -1,6 +1,5 @@
 package com.udacity.jdnd.course3.critter.services;
 
-import com.udacity.jdnd.course3.critter.dtos.CustomerDTO;
 import com.udacity.jdnd.course3.critter.dtos.ScheduleDTO;
 import com.udacity.jdnd.course3.critter.models.entities.Customer;
 import com.udacity.jdnd.course3.critter.models.entities.Employee;
@@ -11,12 +10,13 @@ import com.udacity.jdnd.course3.critter.repositories.EmployeeRepository;
 import com.udacity.jdnd.course3.critter.repositories.PetRepository;
 import com.udacity.jdnd.course3.critter.repositories.ScheduleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ScheduleService {
 
     private CustomerRepository customerRepository;
