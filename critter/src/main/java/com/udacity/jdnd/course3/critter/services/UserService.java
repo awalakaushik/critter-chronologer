@@ -10,7 +10,9 @@ import com.udacity.jdnd.course3.critter.repositories.PetRepository;
 import com.udacity.jdnd.course3.critter.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,5 +111,11 @@ public class UserService {
 
     public CustomerDTO getOwnerByPet(long petId) {
         return getDTO(petRepository.getOne(petId).getCustomer());
+    }
+
+    public void setAvailability(Set<DayOfWeek> daysAvailable, long employeeId) {
+        Employee employee = employeeRepository.getOne(employeeId);
+        employee.setDaysAvailableForEmployee(daysAvailable);
+        employeeRepository.save(employee);
     }
 }
