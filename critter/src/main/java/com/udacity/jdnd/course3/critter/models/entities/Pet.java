@@ -1,10 +1,8 @@
 package com.udacity.jdnd.course3.critter.models.entities;
-import com.udacity.jdnd.course3.critter.models.entities.Customer;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import com.udacity.jdnd.course3.critter.enums.PetType;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
