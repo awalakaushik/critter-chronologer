@@ -1,11 +1,7 @@
-package com.udacity.jdnd.course3.critter.models.entities;
-
-import com.udacity.jdnd.course3.critter.dtos.CustomerDTO;
+package com.udacity.jdnd.course3.critter.model.persistence.entities;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table

@@ -1,4 +1,4 @@
-package com.udacity.jdnd.course3.critter.models.entities;
+package com.udacity.jdnd.course3.critter.model.persistence.entities;
 
 import com.udacity.jdnd.course3.critter.enums.EmployeeSkill;
 
