@@ -1,14 +1,12 @@
 package com.udacity.jdnd.course3.critter.controllers;
 
 import com.udacity.jdnd.course3.critter.dtos.ScheduleDTO;
-import com.udacity.jdnd.course3.critter.model.persistence.entities.Customer;
 import com.udacity.jdnd.course3.critter.model.persistence.entities.Employee;
 import com.udacity.jdnd.course3.critter.model.persistence.entities.Pet;
 import com.udacity.jdnd.course3.critter.model.persistence.entities.Schedule;
-import com.udacity.jdnd.course3.critter.model.persistence.repositories.CustomerRepository;
-import com.udacity.jdnd.course3.critter.model.persistence.repositories.EmployeeRepository;
-import com.udacity.jdnd.course3.critter.model.persistence.repositories.PetRepository;
-import com.udacity.jdnd.course3.critter.model.persistence.repositories.ScheduleRepository;
+import com.udacity.jdnd.course3.critter.services.PetService;
+import com.udacity.jdnd.course3.critter.services.ScheduleService;
+import com.udacity.jdnd.course3.critter.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,55 +19,29 @@ import java.util.stream.Collectors;
 @RequestMapping("/schedule")
 public class ScheduleController {
 
-    private CustomerRepository customerRepository;
-    private EmployeeRepository employeeRepository;
-    private ScheduleRepository scheduleRepository;
-    private PetRepository petRepository;
+    private UserService userService;
+    private ScheduleService scheduleService;
+    private PetService petService;
 
-    public ScheduleController(CustomerRepository customerRepository, EmployeeRepository employeeRepository,
-                              ScheduleRepository scheduleRepository, PetRepository petRepository) {
-        this.customerRepository = customerRepository;
-        this.employeeRepository = employeeRepository;
-        this.scheduleRepository = scheduleRepository;
-        this.petRepository = petRepository;
+    public ScheduleController(UserService userService, ScheduleService scheduleService, PetService petService) {
+        this.userService = userService;
+        this.scheduleService = scheduleService;
+        this.petService = petService;
     }
 
     @PostMapping
     public ScheduleDTO createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
-        Schedule schedule = new Schedule();
-
-        schedule.setEmployeeList(employeeRepository
-                .findAll()
-                .stream()
-                .filter(employee -> scheduleDTO.getEmployeeIds().contains(employee.getId()))
-                .collect(Collectors.toList()));
-        schedule.setEmployeeSkills(scheduleDTO.getActivities());
-        schedule.setId(scheduleDTO.getId());
-        schedule.setPetList(petRepository.findAll()
-                .stream()
-                .filter(pet -> scheduleDTO.getPetIds().contains(pet.getId()))
-                .collect(Collectors.toList()));
-        schedule.setDate(scheduleDTO.getDate());
-
-        Schedule savedSchedule = scheduleRepository.save(schedule);
-
-        return getDTO(savedSchedule);
+        return getDTO(scheduleService.createSchedule(scheduleDTO));
     }
 
     @GetMapping
     public List<ScheduleDTO> getAllSchedules() {
-
-        return scheduleRepository.findAll().stream().map(this::getDTO).collect(Collectors.toList());
+        return scheduleService.getAllSchedules().stream().map(this::getDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/pet/{petId}")
     public List<ScheduleDTO> getScheduleForPet(@PathVariable long petId) {
-        Pet pet = petRepository.getOne(petId);
-
-        return scheduleRepository.findAll()
-                .stream()
-                .filter(schedule -> schedule.getPetList().contains(pet))
-                .collect(Collectors.toList())
+        return scheduleService.getScheduleForPet(petId)
                 .stream()
                 .map(this::getDTO)
                 .collect(Collectors.toList());
@@ -77,12 +49,7 @@ public class ScheduleController {
 
     @GetMapping("/employee/{employeeId}")
     public List<ScheduleDTO> getScheduleForEmployee(@PathVariable long employeeId) {
-        Employee employee = employeeRepository.getOne(employeeId);
-
-        return scheduleRepository.findAll()
-                .stream()
-                .filter(schedule -> schedule.getEmployeeList().contains(employee))
-                .collect(Collectors.toList())
+        return scheduleService.getScheduleForEmployee(employeeId)
                 .stream()
                 .map(this::getDTO)
                 .collect(Collectors.toList());
@@ -90,12 +57,7 @@ public class ScheduleController {
 
     @GetMapping("/customer/{customerId}")
     public List<ScheduleDTO> getScheduleForCustomer(@PathVariable long customerId) {
-        Customer customer = customerRepository.getOne(customerId);
-
-        return scheduleRepository.findAll()
-                .stream()
-                .filter(schedule -> schedule.getPetList().containsAll(customer.getPets()))
-                .collect(Collectors.toList())
+        return scheduleService.getScheduleForCustomer(customerId)
                 .stream()
                 .map(this::getDTO)
                 .collect(Collectors.toList());
