@@ -6,10 +6,6 @@ import com.udacity.jdnd.course3.critter.dtos.EmployeeRequestDTO;
 import com.udacity.jdnd.course3.critter.model.persistence.entities.Customer;
 import com.udacity.jdnd.course3.critter.model.persistence.entities.Employee;
 import com.udacity.jdnd.course3.critter.model.persistence.entities.Pet;
-import com.udacity.jdnd.course3.critter.model.persistence.repositories.CustomerRepository;
-import com.udacity.jdnd.course3.critter.model.persistence.repositories.EmployeeRepository;
-import com.udacity.jdnd.course3.critter.model.persistence.repositories.PetRepository;
-import com.udacity.jdnd.course3.critter.services.PetService;
 import com.udacity.jdnd.course3.critter.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
