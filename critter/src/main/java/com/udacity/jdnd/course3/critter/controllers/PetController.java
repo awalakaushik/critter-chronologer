@@ -5,6 +5,7 @@ import com.udacity.jdnd.course3.critter.model.persistence.entities.Customer;
 import com.udacity.jdnd.course3.critter.model.persistence.entities.Pet;
 import com.udacity.jdnd.course3.critter.model.persistence.repositories.CustomerRepository;
 import com.udacity.jdnd.course3.critter.model.persistence.repositories.PetRepository;
+import com.udacity.jdnd.course3.critter.services.PetService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,49 +19,34 @@ import java.util.stream.Collectors;
 @RequestMapping("/pet")
 public class PetController {
 
-    private PetRepository petRepository;
-    private CustomerRepository customerRepository;
+    private PetService petService;
 
-    public PetController(PetRepository petRepository, CustomerRepository customerRepository) {
-        this.petRepository = petRepository;
-        this.customerRepository = customerRepository;
+    public PetController(PetService petService) {
+        this.petService = petService;
     }
 
     @PostMapping
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
-
-        Pet pet = new Pet();
-
-        pet.setId(petDTO.getId());
-        pet.setPetName(petDTO.getName());
-        pet.setPetBirthDate(petDTO.getBirthDate());
-
-        Customer customer = customerRepository.getOne(petDTO.getOwnerId());
-
-        pet.setCustomer(customer);
-        pet.setPetNotes(petDTO.getNotes());
-        pet.setPetType(petDTO.getType());
-
-        Pet savedPet = petRepository.save(pet);
-
-        List<Pet> pets = new ArrayList<>();
-        pets.add(pet);
-
-        customer.setPets(pets);
-        customerRepository.save(customer);
-
-        return getDTO(savedPet);
+        return getDTO(petService.savePet(petDTO));
     }
 
     @GetMapping("/{petId}")
     public PetDTO getPet(@PathVariable long petId) {
-        Pet pet = petRepository.getOne(petId);
-        return getDTO(pet);
+        return getDTO(petService.getPet(petId));
     }
 
     @GetMapping
     public List<PetDTO> getPets(){
-        return petRepository.findAll().stream().map(this::getDTO).collect(Collectors.toList());
+        return petService.getPets().stream().map(this::getDTO).collect(Collectors.toList());
+    }
+
+    @GetMapping("/owner/{ownerId}")
+    public List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
+        return petService.getPetsByOwner()
+                .stream()
+                .filter(pet -> pet.getCustomer().getId() == ownerId)
+                .map(this::getDTO)
+                .collect(Collectors.toList());
     }
 
     private PetDTO getDTO(Pet pet) {
@@ -74,16 +60,5 @@ public class PetController {
         petDTO.setType(pet.getPetType());
 
         return petDTO;
-    }
-
-    @GetMapping("/owner/{ownerId}")
-    public List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
-
-        List<Pet> pets = petRepository.findAll();
-        return pets
-                .stream()
-                .filter(pet -> pet.getCustomer().getId() == ownerId)
-                .map(this::getDTO)
-                .collect(Collectors.toList());
     }
 }
