@@ -9,6 +9,8 @@ import com.udacity.jdnd.course3.critter.model.persistence.entities.Pet;
 import com.udacity.jdnd.course3.critter.model.persistence.repositories.CustomerRepository;
 import com.udacity.jdnd.course3.critter.model.persistence.repositories.EmployeeRepository;
 import com.udacity.jdnd.course3.critter.model.persistence.repositories.PetRepository;
+import com.udacity.jdnd.course3.critter.services.PetService;
+import com.udacity.jdnd.course3.critter.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
@@ -26,99 +28,49 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 public class UserController {
 
-    private CustomerRepository customerRepository;
-    private EmployeeRepository employeeRepository;
-    private PetRepository petRepository;
+    private UserService userService;
 
-    public UserController(CustomerRepository customerRepository, EmployeeRepository employeeRepository,
-                          PetRepository petRepository) {
-        this.customerRepository = customerRepository;
-        this.employeeRepository = employeeRepository;
-        this.petRepository = petRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/customer")
     public CustomerDTO saveCustomer(@RequestBody CustomerDTO customerDTO){
-        Customer customer = new Customer();
-
-        customer.setId(customerDTO.getId());
-        customer.setFullName(customerDTO.getName());
-        customer.setCustomerNotes(customerDTO.getNotes());
-        customer.setCustomerPhoneNumber(customerDTO.getPhoneNumber());
-
-        if (customerDTO.getPetIds() != null && !customerDTO.getPetIds().isEmpty()) {
-
-            List<Pet> customerPets = customerDTO
-                    .getPetIds()
-                    .stream()
-                    .map((Long id) -> petRepository.getOne(id))
-                    .collect(Collectors.toList());
-            customer.setPets(customerPets);
-        }
-
-        Customer savedCustomer = customerRepository.save(customer);
-
-        return getDTO(savedCustomer);
+        Customer customer = userService.saveCustomer(customerDTO);
+        return getDTO(customer);
     }
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-
-        List<Customer> customers = customerRepository.findAll();
+        List<Customer> customers = userService.getAllCustomers();
         return customers.stream().map(this::getDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
-        return getDTO(petRepository.getOne(petId).getCustomer());
+        return getDTO(userService.getOwnerByPet(petId));
     }
 
     @PostMapping("/employee")
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        Employee employee = new Employee();
-
-        employee.setId(employeeDTO.getId());
-        employee.setFullName(employeeDTO.getName());
-        employee.setDaysAvailableForEmployee(employeeDTO.getDaysAvailable());
-
-        if (employeeDTO.getSkills() != null && !employeeDTO.getSkills().isEmpty()) {
-            employee.setEmployeeSkills(employeeDTO.getSkills());
-        }
-
-        Employee savedEmployee = employeeRepository.save(employee);
-
-        return getDTO(savedEmployee);
+        Employee employee = userService.saveEmployee(employeeDTO);
+        return getDTO(employee);
     }
 
     @PostMapping("/employee/{employeeId}")
     public EmployeeDTO getEmployee(@PathVariable long employeeId) {
-
-        Employee employee = employeeRepository.getOne(employeeId);
+        Employee employee = userService.getEmployee(employeeId);
         return getDTO(employee);
     }
 
     @PutMapping("/employee/{employeeId}")
     public void setAvailability(@RequestBody Set<DayOfWeek> daysAvailable, @PathVariable long employeeId) {
-        Employee employee = employeeRepository.getOne(employeeId);
-        employee.setDaysAvailableForEmployee(daysAvailable);
-        employeeRepository.save(employee);
+        userService.setAvailability(daysAvailable, employeeId);
     }
 
     @GetMapping("/employee/availability")
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        List<Employee> employees = employeeRepository.findAll();
-
-        List<Employee> filteredEmployees = employees.stream().filter(employee -> {
-            List<DayOfWeek> availableDays = employee.getDaysAvailableForEmployee()
-                    .stream()
-                    .filter(dayOfWeek -> dayOfWeek == employeeDTO.getDate().getDayOfWeek())
-                    .collect(Collectors.toList());
-            return employee.getDaysAvailableForEmployee().containsAll(availableDays);
-        }).collect(Collectors.toList())
-                .stream()
-                .filter(employee -> employee.getEmployeeSkills().containsAll(employeeDTO.getSkills()))
-                .collect(Collectors.toList());
-
+        List<Employee> filteredEmployees = userService.findEmployeesForService(employeeDTO);
         return filteredEmployees
                 .stream()
                 .map(this::getDTO)
